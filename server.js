@@ -4,6 +4,8 @@ var bodyParser = require("body-parser");
 var logger = require("morgan");
 var mongoose = require("mongoose");
 
+// Require Schemas
+var Article = require("./server/model");
 // Create Instance of Express
 var app = express();
 var PORT = process.env.PORT || 3000;
@@ -17,17 +19,8 @@ app.use(bodyParser.json({ type: "application/vnd.api+json" }));
 app.use(express.static("./public"));
 
 // MongoDB connection
-if(process.env.MONGODB_URI){
-  mongoose.connect(process.env.MONGODB_URI, function(){
-    console.log("uri connected");
-  });
-}
-else{
-  mongoose.connect('mongodb://localhost/NYTScrape', function(){
-    console.log("local load");
-  });
-}
 var db = mongoose.connection;
+
 db.on("error", function(err) {
   console.log("Mongoose Error: ", err);
 });
@@ -41,10 +34,8 @@ db.once("open", function() {
 
 // Route to get all saved articles
 app.get("/api/saved", function(req, res) {
-
   Article.find({})
     .exec(function(err, doc) {
-
       if (err) {
         console.log(err);
       }
@@ -57,9 +48,7 @@ app.get("/api/saved", function(req, res) {
 // Route to add an article to saved list
 app.post("/api/saved", function(req, res) {
   var newArticle = new Article(req.body);
-
   console.log(req.body);
-
   newArticle.save(function(err, doc) {
     if (err) {
       console.log(err);
@@ -72,9 +61,7 @@ app.post("/api/saved", function(req, res) {
 
 // Route to delete an article from saved list
 app.delete("/api/saved/", function(req, res) {
-
   var url = req.param("url");
-
   Article.find({ url: url }).remove().exec(function(err) {
     if (err) {
       console.log(err);

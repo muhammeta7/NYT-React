@@ -22056,7 +22056,7 @@
 	// Reference the high-level components
 	var Main = __webpack_require__(/*! ../components/Main */ 242);
 	var Search = __webpack_require__(/*! ../components/Search */ 243);
-	var Saved = __webpack_require__(/*! ../components/Saved */ 244);
+	var Saved = __webpack_require__(/*! ../components/Saved */ 266);
 	
 	// Export the Routes
 	module.exports =
@@ -28058,18 +28058,1904 @@
 /*!**********************************!*\
   !*** ./app/components/Search.js ***!
   \**********************************/
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	
+	// Include React as a dependency
+	var React = __webpack_require__(/*! react */ 1);
+	
+	// Include the Query and Results components
+	var Query = __webpack_require__(/*! ./search/Query */ 244);
+	var Results = __webpack_require__(/*! ./search/Results */ 245);
+	
+	// Include the helpers for making API calls
+	var helpers = __webpack_require__(/*! ../utils/helpers */ 246);
+	
+	// Create the Search component
+	var Search = React.createClass({
+	  displayName: "Search",
+	
+	
+	  // Here we set the initial state variables
+	  // (this allows us to propagate the variables for maniuplation by the children components
+	  // Also note the "resuls" state. This will be where we hold the data from our results
+	  getInitialState: function getInitialState() {
+	    return {
+	      results: {}
+	    };
+	  },
+	
+	  // This function will be passed down into child components so they can change the "parent"
+	  // i.e we will pass this method to the query component that way it can change the main component
+	  // to perform a new search
+	  setQuery: function setQuery(newQuery, newStart, newEnd) {
+	    helpers.runQuery(newQuery, newStart, newEnd).then(function (data) {
+	      this.setState({ results: { docs: data.docs } });
+	    }.bind(this));
+	  },
+	
+	  // Render the component. Note how we deploy both the Query and the Results Components
+	  render: function render() {
+	    console.log("Render Results", this.state.results);
+	
+	    return React.createElement(
+	      "div",
+	      { className: "main-container" },
+	      React.createElement(Query, { updateSearch: this.setQuery }),
+	      React.createElement(Results, { results: this.state.results })
+	    );
+	  }
+	});
+	
+	// Export the module back to the route
+	module.exports = Search;
 
 /***/ },
 /* 244 */
+/*!****************************************!*\
+  !*** ./app/components/search/Query.js ***!
+  \****************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	// Include React as a dependency
+	var React = __webpack_require__(/*! react */ 1);
+	
+	// Query Component Declaration
+	var Query = React.createClass({
+	  displayName: "Query",
+	
+	
+	  // Here we set initial variables for the component to be blanks
+	  getInitialState: function getInitialState() {
+	    return {
+	      search: "",
+	      start: "",
+	      end: ""
+	    };
+	  },
+	
+	  // Whenever we detect ANY change in the textbox, we register it.
+	  handleChange: function handleChange(event) {
+	    console.log("TEXT CHANGED");
+	
+	    // Here we create syntax to capture any change in text to the query terms (pre-search).
+	    // See this Stack Overflow answer for more details:
+	    // http://stackoverflow.com/questions/21029999/react-js-identifying-different-inputs-with-one-onchange-handler
+	    var newState = {};
+	    newState[event.target.id] = event.target.value;
+	    this.setState(newState);
+	  },
+	
+	  // This code handles the sending of the search terms to the parent Search component
+	  handleSubmit: function handleSubmit(event) {
+	    event.preventDefault();
+	    console.log("CLICKED");
+	    this.props.updateSearch(this.state.search, this.state.start, this.state.end);
+	  },
+	
+	  // Here we render the Query component
+	  render: function render() {
+	
+	    return React.createElement(
+	      "div",
+	      { className: "main-container" },
+	      React.createElement(
+	        "div",
+	        { className: "row" },
+	        React.createElement(
+	          "div",
+	          { className: "col-lg-12" },
+	          React.createElement(
+	            "div",
+	            { className: "panel panel-primary" },
+	            React.createElement(
+	              "div",
+	              { className: "panel-heading" },
+	              React.createElement(
+	                "h1",
+	                { className: "panel-title" },
+	                React.createElement(
+	                  "strong",
+	                  null,
+	                  React.createElement("i", { className: "fa fa-newspaper-o", "aria-hidden": "true" }),
+	                  " Query"
+	                )
+	              )
+	            ),
+	            React.createElement(
+	              "div",
+	              { className: "panel-body" },
+	              React.createElement(
+	                "form",
+	                { onSubmit: this.handleSubmit },
+	                React.createElement(
+	                  "div",
+	                  { className: "form-group" },
+	                  React.createElement(
+	                    "h4",
+	                    { className: "" },
+	                    React.createElement(
+	                      "strong",
+	                      null,
+	                      "Topic"
+	                    )
+	                  ),
+	                  React.createElement("input", {
+	                    type: "text",
+	                    value: this.state.search,
+	                    className: "form-control",
+	                    id: "search",
+	                    onChange: this.handleChange,
+	                    required: true
+	                  }),
+	                  React.createElement(
+	                    "h4",
+	                    null,
+	                    React.createElement(
+	                      "strong",
+	                      null,
+	                      "Start Year"
+	                    )
+	                  ),
+	                  React.createElement("input", {
+	                    type: "number",
+	                    value: this.state.start,
+	                    className: "form-control",
+	                    id: "start",
+	                    onChange: this.handleChange,
+	                    required: true
+	                  }),
+	                  React.createElement(
+	                    "h4",
+	                    null,
+	                    React.createElement(
+	                      "strong",
+	                      null,
+	                      "End Year"
+	                    )
+	                  ),
+	                  React.createElement("input", {
+	                    type: "number",
+	                    value: this.state.end,
+	                    className: "form-control",
+	                    id: "end",
+	                    onChange: this.handleChange,
+	                    required: true
+	                  })
+	                ),
+	                React.createElement(
+	                  "div",
+	                  { className: "pull-right" },
+	                  React.createElement(
+	                    "button",
+	                    {
+	                      type: "submit",
+	                      className: "btn btn-danger"
+	                    },
+	                    React.createElement(
+	                      "h4",
+	                      null,
+	                      "Submit"
+	                    )
+	                  )
+	                )
+	              )
+	            )
+	          )
+	        )
+	      )
+	    );
+	  }
+	});
+	
+	// Export the module back to the route
+	module.exports = Query;
+
+/***/ },
+/* 245 */
+/*!******************************************!*\
+  !*** ./app/components/search/Results.js ***!
+  \******************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	// Include React as a dependency
+	var React = __webpack_require__(/*! react */ 1);
+	
+	// Include our helpers for API calls
+	var helpers = __webpack_require__(/*! ../../utils/helpers */ 246);
+	
+	// Results Component Declaration
+	var Results = React.createClass({
+	  displayName: "Results",
+	
+	
+	  // Here we will save states for the contents we save
+	  getInitialState: function getInitialState() {
+	    return {
+	      title: "",
+	      url: "",
+	      pubdate: ""
+	    };
+	  },
+	
+	  // This code handles the sending of the search terms to the parent Search component
+	  handleClick: function handleClick(item) {
+	    console.log("CLICKED");
+	    console.log(item);
+	
+	    helpers.postSaved(item.headline.main, item.pub_date, item.web_url).then(function () {
+	      console.log(item.web_url);
+	    });
+	  },
+	
+	  // A helper method for mapping through our articles and outputting some HTML
+	  renderArticles: function renderArticles() {
+	    return this.props.results.docs.map(function (article, index) {
+	      var _this = this;
+	
+	      // Each article thus reperesents a list group item with a known index
+	      return React.createElement(
+	        "div",
+	        { key: index },
+	        React.createElement(
+	          "li",
+	          { className: "list-group-item" },
+	          React.createElement(
+	            "h3",
+	            null,
+	            React.createElement(
+	              "span",
+	              null,
+	              React.createElement(
+	                "em",
+	                null,
+	                article.headline.main
+	              )
+	            ),
+	            React.createElement(
+	              "span",
+	              { className: "btn-group pull-right" },
+	              React.createElement(
+	                "a",
+	                { href: article.web_url, rel: "noopener noreferrer", target: "_blank" },
+	                React.createElement(
+	                  "button",
+	                  { className: "btn btn-default " },
+	                  "View Article"
+	                )
+	              ),
+	              React.createElement(
+	                "button",
+	                { className: "btn btn-primary", onClick: function onClick() {
+	                    return _this.handleClick(article);
+	                  } },
+	                "Save"
+	              )
+	            )
+	          ),
+	          React.createElement(
+	            "p",
+	            null,
+	            "Date Published: ",
+	            article.pub_date
+	          )
+	        )
+	      );
+	    }.bind(this));
+	  },
+	
+	  // A helper method for rendering a container to hold all of our articles
+	  renderContainer: function renderContainer() {
+	    return React.createElement(
+	      "div",
+	      { className: "main-container" },
+	      React.createElement(
+	        "div",
+	        { className: "row" },
+	        React.createElement(
+	          "div",
+	          { className: "col-lg-12" },
+	          React.createElement(
+	            "div",
+	            { className: "panel panel-primary" },
+	            React.createElement(
+	              "div",
+	              { className: "panel-heading" },
+	              React.createElement(
+	                "h1",
+	                { className: "panel-title" },
+	                React.createElement(
+	                  "strong",
+	                  null,
+	                  React.createElement("i", { className: "fa fa-list-alt" }),
+	                  "Results"
+	                )
+	              )
+	            ),
+	            React.createElement(
+	              "div",
+	              { className: "panel-body" },
+	              React.createElement(
+	                "ul",
+	                { className: "list-group" },
+	                this.renderArticles()
+	              )
+	            )
+	          )
+	        )
+	      )
+	    );
+	  },
+	  render: function render() {
+	    // If we have no articles, render this HTML
+	    if (!this.props.results.docs) {
+	      return React.createElement(
+	        "li",
+	        { className: "list-group-item" },
+	        React.createElement(
+	          "h3",
+	          null,
+	          React.createElement(
+	            "span",
+	            null,
+	            React.createElement(
+	              "em",
+	              null,
+	              "Enter search terms to begin..."
+	            )
+	          )
+	        )
+	      );
+	    }
+	    // If we have articles, return this.renderContainer() which in turn, returns all the articles
+	    return this.renderContainer();
+	  }
+	});
+	
+	// Export the module back to the route
+	module.exports = Results;
+
+/***/ },
+/* 246 */
+/*!******************************!*\
+  !*** ./app/utils/helpers.js ***!
+  \******************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	// Include axios library for HTTP requests
+	var axios = __webpack_require__(/*! axios */ 247);
+	
+	// NYT API key
+	var APIKey = "e6155b0f85574901ab7115f47cc4e3f2";
+	
+	var helpers = {
+	  // This will run our query.
+	  runQuery: function runQuery(term, start, end) {
+	    // Adjust to get search terms in proper format
+	    var formattedTerm = term.trim();
+	    var formattedStart = start.trim() + "0101";
+	    var formattedEnd = end.trim() + "1231";
+	    console.log("Query Run");
+	    // Run a query using Axios. Then return the results as an object with an array.
+	    // See the Axios documentation for details on how we structured this with the params.
+	    return axios.get("https://api.nytimes.com/svc/search/v2/articlesearch.json", {
+	      params: {
+	        "api-key": APIKey,
+	        "q": formattedTerm,
+	        "begin_date": formattedStart,
+	        "end_date": formattedEnd
+	      }
+	    }).then(function (results) {
+	      console.log("Axios Results", results.data.response);
+	      return results.data.response;
+	    });
+	  },
+	  // This will return any saved articles from database
+	  getSaved: function getSaved() {
+	    return axios.get("/api/saved").then(function (results) {
+	      console.log("axios results", results);
+	      return results;
+	    });
+	  },
+	  // This will save new articles to database
+	  postSaved: function postSaved(title, date, url) {
+	    var newArticle = { title: title, date: date, url: url };
+	    return axios.post("/api/saved", newArticle).then(function (response) {
+	      console.log("axios results", response.data._id);
+	      return response.data._id;
+	    });
+	  },
+	  // This will remove saved articles from database
+	  deleteSaved: function deleteSaved(title, data, url) {
+	    return axios.delete("/api/saved", {
+	      params: {
+	        "title": title,
+	        "data": data,
+	        "url": url
+	      }
+	    }).then(function (results) {
+	      console.log("axios results", results);
+	      return results;
+	    });
+	  }
+	};
+	
+	module.exports = helpers;
+
+/***/ },
+/* 247 */
+/*!**************************!*\
+  !*** ./~/axios/index.js ***!
+  \**************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(/*! ./lib/axios */ 248);
+
+/***/ },
+/* 248 */
+/*!******************************!*\
+  !*** ./~/axios/lib/axios.js ***!
+  \******************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var defaults = __webpack_require__(/*! ./defaults */ 249);
+	var utils = __webpack_require__(/*! ./utils */ 250);
+	var dispatchRequest = __webpack_require__(/*! ./core/dispatchRequest */ 252);
+	var InterceptorManager = __webpack_require__(/*! ./core/InterceptorManager */ 261);
+	var isAbsoluteURL = __webpack_require__(/*! ./helpers/isAbsoluteURL */ 262);
+	var combineURLs = __webpack_require__(/*! ./helpers/combineURLs */ 263);
+	var bind = __webpack_require__(/*! ./helpers/bind */ 264);
+	var transformData = __webpack_require__(/*! ./helpers/transformData */ 256);
+	
+	function Axios(defaultConfig) {
+	  this.defaults = utils.merge({}, defaultConfig);
+	  this.interceptors = {
+	    request: new InterceptorManager(),
+	    response: new InterceptorManager()
+	  };
+	}
+	
+	Axios.prototype.request = function request(config) {
+	  /*eslint no-param-reassign:0*/
+	  // Allow for axios('example/url'[, config]) a la fetch API
+	  if (typeof config === 'string') {
+	    config = utils.merge({
+	      url: arguments[0]
+	    }, arguments[1]);
+	  }
+	
+	  config = utils.merge(defaults, this.defaults, { method: 'get' }, config);
+	
+	  // Support baseURL config
+	  if (config.baseURL && !isAbsoluteURL(config.url)) {
+	    config.url = combineURLs(config.baseURL, config.url);
+	  }
+	
+	  // Don't allow overriding defaults.withCredentials
+	  config.withCredentials = config.withCredentials || this.defaults.withCredentials;
+	
+	  // Transform request data
+	  config.data = transformData(
+	    config.data,
+	    config.headers,
+	    config.transformRequest
+	  );
+	
+	  // Flatten headers
+	  config.headers = utils.merge(
+	    config.headers.common || {},
+	    config.headers[config.method] || {},
+	    config.headers || {}
+	  );
+	
+	  utils.forEach(
+	    ['delete', 'get', 'head', 'post', 'put', 'patch', 'common'],
+	    function cleanHeaderConfig(method) {
+	      delete config.headers[method];
+	    }
+	  );
+	
+	  // Hook up interceptors middleware
+	  var chain = [dispatchRequest, undefined];
+	  var promise = Promise.resolve(config);
+	
+	  this.interceptors.request.forEach(function unshiftRequestInterceptors(interceptor) {
+	    chain.unshift(interceptor.fulfilled, interceptor.rejected);
+	  });
+	
+	  this.interceptors.response.forEach(function pushResponseInterceptors(interceptor) {
+	    chain.push(interceptor.fulfilled, interceptor.rejected);
+	  });
+	
+	  while (chain.length) {
+	    promise = promise.then(chain.shift(), chain.shift());
+	  }
+	
+	  return promise;
+	};
+	
+	var defaultInstance = new Axios(defaults);
+	var axios = module.exports = bind(Axios.prototype.request, defaultInstance);
+	axios.request = bind(Axios.prototype.request, defaultInstance);
+	
+	// Expose Axios class to allow class inheritance
+	axios.Axios = Axios;
+	
+	// Expose properties from defaultInstance
+	axios.defaults = defaultInstance.defaults;
+	axios.interceptors = defaultInstance.interceptors;
+	
+	// Factory for creating new instances
+	axios.create = function create(defaultConfig) {
+	  return new Axios(defaultConfig);
+	};
+	
+	// Expose all/spread
+	axios.all = function all(promises) {
+	  return Promise.all(promises);
+	};
+	axios.spread = __webpack_require__(/*! ./helpers/spread */ 265);
+	
+	// Provide aliases for supported request methods
+	utils.forEach(['delete', 'get', 'head'], function forEachMethodNoData(method) {
+	  /*eslint func-names:0*/
+	  Axios.prototype[method] = function(url, config) {
+	    return this.request(utils.merge(config || {}, {
+	      method: method,
+	      url: url
+	    }));
+	  };
+	  axios[method] = bind(Axios.prototype[method], defaultInstance);
+	});
+	
+	utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
+	  /*eslint func-names:0*/
+	  Axios.prototype[method] = function(url, data, config) {
+	    return this.request(utils.merge(config || {}, {
+	      method: method,
+	      url: url,
+	      data: data
+	    }));
+	  };
+	  axios[method] = bind(Axios.prototype[method], defaultInstance);
+	});
+
+
+/***/ },
+/* 249 */
+/*!*********************************!*\
+  !*** ./~/axios/lib/defaults.js ***!
+  \*********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var utils = __webpack_require__(/*! ./utils */ 250);
+	var normalizeHeaderName = __webpack_require__(/*! ./helpers/normalizeHeaderName */ 251);
+	
+	var PROTECTION_PREFIX = /^\)\]\}',?\n/;
+	var DEFAULT_CONTENT_TYPE = {
+	  'Content-Type': 'application/x-www-form-urlencoded'
+	};
+	
+	function setContentTypeIfUnset(headers, value) {
+	  if (!utils.isUndefined(headers) && utils.isUndefined(headers['Content-Type'])) {
+	    headers['Content-Type'] = value;
+	  }
+	}
+	
+	module.exports = {
+	  transformRequest: [function transformRequest(data, headers) {
+	    normalizeHeaderName(headers, 'Content-Type');
+	    if (utils.isFormData(data) ||
+	      utils.isArrayBuffer(data) ||
+	      utils.isStream(data) ||
+	      utils.isFile(data) ||
+	      utils.isBlob(data)
+	    ) {
+	      return data;
+	    }
+	    if (utils.isArrayBufferView(data)) {
+	      return data.buffer;
+	    }
+	    if (utils.isURLSearchParams(data)) {
+	      setContentTypeIfUnset(headers, 'application/x-www-form-urlencoded;charset=utf-8');
+	      return data.toString();
+	    }
+	    if (utils.isObject(data)) {
+	      setContentTypeIfUnset(headers, 'application/json;charset=utf-8');
+	      return JSON.stringify(data);
+	    }
+	    return data;
+	  }],
+	
+	  transformResponse: [function transformResponse(data) {
+	    /*eslint no-param-reassign:0*/
+	    if (typeof data === 'string') {
+	      data = data.replace(PROTECTION_PREFIX, '');
+	      try {
+	        data = JSON.parse(data);
+	      } catch (e) { /* Ignore */ }
+	    }
+	    return data;
+	  }],
+	
+	  headers: {
+	    common: {
+	      'Accept': 'application/json, text/plain, */*'
+	    },
+	    patch: utils.merge(DEFAULT_CONTENT_TYPE),
+	    post: utils.merge(DEFAULT_CONTENT_TYPE),
+	    put: utils.merge(DEFAULT_CONTENT_TYPE)
+	  },
+	
+	  timeout: 0,
+	
+	  xsrfCookieName: 'XSRF-TOKEN',
+	  xsrfHeaderName: 'X-XSRF-TOKEN',
+	
+	  maxContentLength: -1,
+	
+	  validateStatus: function validateStatus(status) {
+	    return status >= 200 && status < 300;
+	  }
+	};
+
+
+/***/ },
+/* 250 */
+/*!******************************!*\
+  !*** ./~/axios/lib/utils.js ***!
+  \******************************/
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	/*global toString:true*/
+	
+	// utils is a library of generic helper functions non-specific to axios
+	
+	var toString = Object.prototype.toString;
+	
+	/**
+	 * Determine if a value is an Array
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is an Array, otherwise false
+	 */
+	function isArray(val) {
+	  return toString.call(val) === '[object Array]';
+	}
+	
+	/**
+	 * Determine if a value is an ArrayBuffer
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is an ArrayBuffer, otherwise false
+	 */
+	function isArrayBuffer(val) {
+	  return toString.call(val) === '[object ArrayBuffer]';
+	}
+	
+	/**
+	 * Determine if a value is a FormData
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is an FormData, otherwise false
+	 */
+	function isFormData(val) {
+	  return (typeof FormData !== 'undefined') && (val instanceof FormData);
+	}
+	
+	/**
+	 * Determine if a value is a view on an ArrayBuffer
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is a view on an ArrayBuffer, otherwise false
+	 */
+	function isArrayBufferView(val) {
+	  var result;
+	  if ((typeof ArrayBuffer !== 'undefined') && (ArrayBuffer.isView)) {
+	    result = ArrayBuffer.isView(val);
+	  } else {
+	    result = (val) && (val.buffer) && (val.buffer instanceof ArrayBuffer);
+	  }
+	  return result;
+	}
+	
+	/**
+	 * Determine if a value is a String
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is a String, otherwise false
+	 */
+	function isString(val) {
+	  return typeof val === 'string';
+	}
+	
+	/**
+	 * Determine if a value is a Number
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is a Number, otherwise false
+	 */
+	function isNumber(val) {
+	  return typeof val === 'number';
+	}
+	
+	/**
+	 * Determine if a value is undefined
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if the value is undefined, otherwise false
+	 */
+	function isUndefined(val) {
+	  return typeof val === 'undefined';
+	}
+	
+	/**
+	 * Determine if a value is an Object
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is an Object, otherwise false
+	 */
+	function isObject(val) {
+	  return val !== null && typeof val === 'object';
+	}
+	
+	/**
+	 * Determine if a value is a Date
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is a Date, otherwise false
+	 */
+	function isDate(val) {
+	  return toString.call(val) === '[object Date]';
+	}
+	
+	/**
+	 * Determine if a value is a File
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is a File, otherwise false
+	 */
+	function isFile(val) {
+	  return toString.call(val) === '[object File]';
+	}
+	
+	/**
+	 * Determine if a value is a Blob
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is a Blob, otherwise false
+	 */
+	function isBlob(val) {
+	  return toString.call(val) === '[object Blob]';
+	}
+	
+	/**
+	 * Determine if a value is a Function
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is a Function, otherwise false
+	 */
+	function isFunction(val) {
+	  return toString.call(val) === '[object Function]';
+	}
+	
+	/**
+	 * Determine if a value is a Stream
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is a Stream, otherwise false
+	 */
+	function isStream(val) {
+	  return isObject(val) && isFunction(val.pipe);
+	}
+	
+	/**
+	 * Determine if a value is a URLSearchParams object
+	 *
+	 * @param {Object} val The value to test
+	 * @returns {boolean} True if value is a URLSearchParams object, otherwise false
+	 */
+	function isURLSearchParams(val) {
+	  return typeof URLSearchParams !== 'undefined' && val instanceof URLSearchParams;
+	}
+	
+	/**
+	 * Trim excess whitespace off the beginning and end of a string
+	 *
+	 * @param {String} str The String to trim
+	 * @returns {String} The String freed of excess whitespace
+	 */
+	function trim(str) {
+	  return str.replace(/^\s*/, '').replace(/\s*$/, '');
+	}
+	
+	/**
+	 * Determine if we're running in a standard browser environment
+	 *
+	 * This allows axios to run in a web worker, and react-native.
+	 * Both environments support XMLHttpRequest, but not fully standard globals.
+	 *
+	 * web workers:
+	 *  typeof window -> undefined
+	 *  typeof document -> undefined
+	 *
+	 * react-native:
+	 *  typeof document.createElement -> undefined
+	 */
+	function isStandardBrowserEnv() {
+	  return (
+	    typeof window !== 'undefined' &&
+	    typeof document !== 'undefined' &&
+	    typeof document.createElement === 'function'
+	  );
+	}
+	
+	/**
+	 * Iterate over an Array or an Object invoking a function for each item.
+	 *
+	 * If `obj` is an Array callback will be called passing
+	 * the value, index, and complete array for each item.
+	 *
+	 * If 'obj' is an Object callback will be called passing
+	 * the value, key, and complete object for each property.
+	 *
+	 * @param {Object|Array} obj The object to iterate
+	 * @param {Function} fn The callback to invoke for each item
+	 */
+	function forEach(obj, fn) {
+	  // Don't bother if no value provided
+	  if (obj === null || typeof obj === 'undefined') {
+	    return;
+	  }
+	
+	  // Force an array if not already something iterable
+	  if (typeof obj !== 'object' && !isArray(obj)) {
+	    /*eslint no-param-reassign:0*/
+	    obj = [obj];
+	  }
+	
+	  if (isArray(obj)) {
+	    // Iterate over array values
+	    for (var i = 0, l = obj.length; i < l; i++) {
+	      fn.call(null, obj[i], i, obj);
+	    }
+	  } else {
+	    // Iterate over object keys
+	    for (var key in obj) {
+	      if (obj.hasOwnProperty(key)) {
+	        fn.call(null, obj[key], key, obj);
+	      }
+	    }
+	  }
+	}
+	
+	/**
+	 * Accepts varargs expecting each argument to be an object, then
+	 * immutably merges the properties of each object and returns result.
+	 *
+	 * When multiple objects contain the same key the later object in
+	 * the arguments list will take precedence.
+	 *
+	 * Example:
+	 *
+	 * ```js
+	 * var result = merge({foo: 123}, {foo: 456});
+	 * console.log(result.foo); // outputs 456
+	 * ```
+	 *
+	 * @param {Object} obj1 Object to merge
+	 * @returns {Object} Result of all merge properties
+	 */
+	function merge(/* obj1, obj2, obj3, ... */) {
+	  var result = {};
+	  function assignValue(val, key) {
+	    if (typeof result[key] === 'object' && typeof val === 'object') {
+	      result[key] = merge(result[key], val);
+	    } else {
+	      result[key] = val;
+	    }
+	  }
+	
+	  for (var i = 0, l = arguments.length; i < l; i++) {
+	    forEach(arguments[i], assignValue);
+	  }
+	  return result;
+	}
+	
+	module.exports = {
+	  isArray: isArray,
+	  isArrayBuffer: isArrayBuffer,
+	  isFormData: isFormData,
+	  isArrayBufferView: isArrayBufferView,
+	  isString: isString,
+	  isNumber: isNumber,
+	  isObject: isObject,
+	  isUndefined: isUndefined,
+	  isDate: isDate,
+	  isFile: isFile,
+	  isBlob: isBlob,
+	  isFunction: isFunction,
+	  isStream: isStream,
+	  isURLSearchParams: isURLSearchParams,
+	  isStandardBrowserEnv: isStandardBrowserEnv,
+	  forEach: forEach,
+	  merge: merge,
+	  trim: trim
+	};
+
+
+/***/ },
+/* 251 */
+/*!****************************************************!*\
+  !*** ./~/axios/lib/helpers/normalizeHeaderName.js ***!
+  \****************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var utils = __webpack_require__(/*! ../utils */ 250);
+	
+	module.exports = function normalizeHeaderName(headers, normalizedName) {
+	  utils.forEach(headers, function processHeader(value, name) {
+	    if (name !== normalizedName && name.toUpperCase() === normalizedName.toUpperCase()) {
+	      headers[normalizedName] = value;
+	      delete headers[name];
+	    }
+	  });
+	};
+
+
+/***/ },
+/* 252 */
+/*!*********************************************!*\
+  !*** ./~/axios/lib/core/dispatchRequest.js ***!
+  \*********************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
+	
+	/**
+	 * Dispatch a request to the server using whichever adapter
+	 * is supported by the current environment.
+	 *
+	 * @param {object} config The config that is to be used for the request
+	 * @returns {Promise} The Promise to be fulfilled
+	 */
+	module.exports = function dispatchRequest(config) {
+	  return new Promise(function executor(resolve, reject) {
+	    try {
+	      var adapter;
+	
+	      if (typeof config.adapter === 'function') {
+	        // For custom adapter support
+	        adapter = config.adapter;
+	      } else if (typeof XMLHttpRequest !== 'undefined') {
+	        // For browsers use XHR adapter
+	        adapter = __webpack_require__(/*! ../adapters/xhr */ 253);
+	      } else if (typeof process !== 'undefined') {
+	        // For node use HTTP adapter
+	        adapter = __webpack_require__(/*! ../adapters/http */ 253);
+	      }
+	
+	      if (typeof adapter === 'function') {
+	        adapter(resolve, reject, config);
+	      }
+	    } catch (e) {
+	      reject(e);
+	    }
+	  });
+	};
+	
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../../process/browser.js */ 3)))
+
+/***/ },
+/* 253 */
+/*!*************************************!*\
+  !*** ./~/axios/lib/adapters/xhr.js ***!
+  \*************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
+	
+	var utils = __webpack_require__(/*! ./../utils */ 250);
+	var buildURL = __webpack_require__(/*! ./../helpers/buildURL */ 254);
+	var parseHeaders = __webpack_require__(/*! ./../helpers/parseHeaders */ 255);
+	var transformData = __webpack_require__(/*! ./../helpers/transformData */ 256);
+	var isURLSameOrigin = __webpack_require__(/*! ./../helpers/isURLSameOrigin */ 257);
+	var btoa = (typeof window !== 'undefined' && window.btoa) || __webpack_require__(/*! ./../helpers/btoa */ 258);
+	var settle = __webpack_require__(/*! ../helpers/settle */ 259);
+	
+	module.exports = function xhrAdapter(resolve, reject, config) {
+	  var requestData = config.data;
+	  var requestHeaders = config.headers;
+	
+	  if (utils.isFormData(requestData)) {
+	    delete requestHeaders['Content-Type']; // Let the browser set it
+	  }
+	
+	  var request = new XMLHttpRequest();
+	  var loadEvent = 'onreadystatechange';
+	  var xDomain = false;
+	
+	  // For IE 8/9 CORS support
+	  // Only supports POST and GET calls and doesn't returns the response headers.
+	  // DON'T do this for testing b/c XMLHttpRequest is mocked, not XDomainRequest.
+	  if (process.env.NODE_ENV !== 'test' && typeof window !== 'undefined' && window.XDomainRequest && !('withCredentials' in request) && !isURLSameOrigin(config.url)) {
+	    request = new window.XDomainRequest();
+	    loadEvent = 'onload';
+	    xDomain = true;
+	    request.onprogress = function handleProgress() {};
+	    request.ontimeout = function handleTimeout() {};
+	  }
+	
+	  // HTTP basic authentication
+	  if (config.auth) {
+	    var username = config.auth.username || '';
+	    var password = config.auth.password || '';
+	    requestHeaders.Authorization = 'Basic ' + btoa(username + ':' + password);
+	  }
+	
+	  request.open(config.method.toUpperCase(), buildURL(config.url, config.params, config.paramsSerializer), true);
+	
+	  // Set the request timeout in MS
+	  request.timeout = config.timeout;
+	
+	  // Listen for ready state
+	  request[loadEvent] = function handleLoad() {
+	    if (!request || (request.readyState !== 4 && !xDomain)) {
+	      return;
+	    }
+	
+	    // The request errored out and we didn't get a response, this will be
+	    // handled by onerror instead
+	    if (request.status === 0) {
+	      return;
+	    }
+	
+	    // Prepare the response
+	    var responseHeaders = 'getAllResponseHeaders' in request ? parseHeaders(request.getAllResponseHeaders()) : null;
+	    var responseData = !config.responseType || config.responseType === 'text' ? request.responseText : request.response;
+	    var response = {
+	      data: transformData(
+	        responseData,
+	        responseHeaders,
+	        config.transformResponse
+	      ),
+	      // IE sends 1223 instead of 204 (https://github.com/mzabriskie/axios/issues/201)
+	      status: request.status === 1223 ? 204 : request.status,
+	      statusText: request.status === 1223 ? 'No Content' : request.statusText,
+	      headers: responseHeaders,
+	      config: config,
+	      request: request
+	    };
+	
+	    settle(resolve, reject, response);
+	
+	    // Clean up request
+	    request = null;
+	  };
+	
+	  // Handle low level network errors
+	  request.onerror = function handleError() {
+	    // Real errors are hidden from us by the browser
+	    // onerror should only fire if it's a network error
+	    reject(new Error('Network Error'));
+	
+	    // Clean up request
+	    request = null;
+	  };
+	
+	  // Handle timeout
+	  request.ontimeout = function handleTimeout() {
+	    var err = new Error('timeout of ' + config.timeout + 'ms exceeded');
+	    err.timeout = config.timeout;
+	    err.code = 'ECONNABORTED';
+	    reject(err);
+	
+	    // Clean up request
+	    request = null;
+	  };
+	
+	  // Add xsrf header
+	  // This is only done if running in a standard browser environment.
+	  // Specifically not if we're in a web worker, or react-native.
+	  if (utils.isStandardBrowserEnv()) {
+	    var cookies = __webpack_require__(/*! ./../helpers/cookies */ 260);
+	
+	    // Add xsrf header
+	    var xsrfValue = config.withCredentials || isURLSameOrigin(config.url) ?
+	        cookies.read(config.xsrfCookieName) :
+	        undefined;
+	
+	    if (xsrfValue) {
+	      requestHeaders[config.xsrfHeaderName] = xsrfValue;
+	    }
+	  }
+	
+	  // Add headers to the request
+	  if ('setRequestHeader' in request) {
+	    utils.forEach(requestHeaders, function setRequestHeader(val, key) {
+	      if (typeof requestData === 'undefined' && key.toLowerCase() === 'content-type') {
+	        // Remove Content-Type if data is undefined
+	        delete requestHeaders[key];
+	      } else {
+	        // Otherwise add header to the request
+	        request.setRequestHeader(key, val);
+	      }
+	    });
+	  }
+	
+	  // Add withCredentials to request if needed
+	  if (config.withCredentials) {
+	    request.withCredentials = true;
+	  }
+	
+	  // Add responseType to request if needed
+	  if (config.responseType) {
+	    try {
+	      request.responseType = config.responseType;
+	    } catch (e) {
+	      if (request.responseType !== 'json') {
+	        throw e;
+	      }
+	    }
+	  }
+	
+	  // Handle progress if needed
+	  if (config.progress) {
+	    if (config.method === 'post' || config.method === 'put') {
+	      request.upload.addEventListener('progress', config.progress);
+	    } else if (config.method === 'get') {
+	      request.addEventListener('progress', config.progress);
+	    }
+	  }
+	
+	  if (requestData === undefined) {
+	    requestData = null;
+	  }
+	
+	  // Send the request
+	  request.send(requestData);
+	};
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../../process/browser.js */ 3)))
+
+/***/ },
+/* 254 */
+/*!*****************************************!*\
+  !*** ./~/axios/lib/helpers/buildURL.js ***!
+  \*****************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var utils = __webpack_require__(/*! ./../utils */ 250);
+	
+	function encode(val) {
+	  return encodeURIComponent(val).
+	    replace(/%40/gi, '@').
+	    replace(/%3A/gi, ':').
+	    replace(/%24/g, '$').
+	    replace(/%2C/gi, ',').
+	    replace(/%20/g, '+').
+	    replace(/%5B/gi, '[').
+	    replace(/%5D/gi, ']');
+	}
+	
+	/**
+	 * Build a URL by appending params to the end
+	 *
+	 * @param {string} url The base of the url (e.g., http://www.google.com)
+	 * @param {object} [params] The params to be appended
+	 * @returns {string} The formatted url
+	 */
+	module.exports = function buildURL(url, params, paramsSerializer) {
+	  /*eslint no-param-reassign:0*/
+	  if (!params) {
+	    return url;
+	  }
+	
+	  var serializedParams;
+	  if (paramsSerializer) {
+	    serializedParams = paramsSerializer(params);
+	  } else if (utils.isURLSearchParams(params)) {
+	    serializedParams = params.toString();
+	  } else {
+	    var parts = [];
+	
+	    utils.forEach(params, function serialize(val, key) {
+	      if (val === null || typeof val === 'undefined') {
+	        return;
+	      }
+	
+	      if (utils.isArray(val)) {
+	        key = key + '[]';
+	      }
+	
+	      if (!utils.isArray(val)) {
+	        val = [val];
+	      }
+	
+	      utils.forEach(val, function parseValue(v) {
+	        if (utils.isDate(v)) {
+	          v = v.toISOString();
+	        } else if (utils.isObject(v)) {
+	          v = JSON.stringify(v);
+	        }
+	        parts.push(encode(key) + '=' + encode(v));
+	      });
+	    });
+	
+	    serializedParams = parts.join('&');
+	  }
+	
+	  if (serializedParams) {
+	    url += (url.indexOf('?') === -1 ? '?' : '&') + serializedParams;
+	  }
+	
+	  return url;
+	};
+
+
+/***/ },
+/* 255 */
+/*!*********************************************!*\
+  !*** ./~/axios/lib/helpers/parseHeaders.js ***!
+  \*********************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var utils = __webpack_require__(/*! ./../utils */ 250);
+	
+	/**
+	 * Parse headers into an object
+	 *
+	 * ```
+	 * Date: Wed, 27 Aug 2014 08:58:49 GMT
+	 * Content-Type: application/json
+	 * Connection: keep-alive
+	 * Transfer-Encoding: chunked
+	 * ```
+	 *
+	 * @param {String} headers Headers needing to be parsed
+	 * @returns {Object} Headers parsed into an object
+	 */
+	module.exports = function parseHeaders(headers) {
+	  var parsed = {};
+	  var key;
+	  var val;
+	  var i;
+	
+	  if (!headers) { return parsed; }
+	
+	  utils.forEach(headers.split('\n'), function parser(line) {
+	    i = line.indexOf(':');
+	    key = utils.trim(line.substr(0, i)).toLowerCase();
+	    val = utils.trim(line.substr(i + 1));
+	
+	    if (key) {
+	      parsed[key] = parsed[key] ? parsed[key] + ', ' + val : val;
+	    }
+	  });
+	
+	  return parsed;
+	};
+
+
+/***/ },
+/* 256 */
+/*!**********************************************!*\
+  !*** ./~/axios/lib/helpers/transformData.js ***!
+  \**********************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var utils = __webpack_require__(/*! ./../utils */ 250);
+	
+	/**
+	 * Transform the data for a request or a response
+	 *
+	 * @param {Object|String} data The data to be transformed
+	 * @param {Array} headers The headers for the request or response
+	 * @param {Array|Function} fns A single function or Array of functions
+	 * @returns {*} The resulting transformed data
+	 */
+	module.exports = function transformData(data, headers, fns) {
+	  /*eslint no-param-reassign:0*/
+	  utils.forEach(fns, function transform(fn) {
+	    data = fn(data, headers);
+	  });
+	
+	  return data;
+	};
+
+
+/***/ },
+/* 257 */
+/*!************************************************!*\
+  !*** ./~/axios/lib/helpers/isURLSameOrigin.js ***!
+  \************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var utils = __webpack_require__(/*! ./../utils */ 250);
+	
+	module.exports = (
+	  utils.isStandardBrowserEnv() ?
+	
+	  // Standard browser envs have full support of the APIs needed to test
+	  // whether the request URL is of the same origin as current location.
+	  (function standardBrowserEnv() {
+	    var msie = /(msie|trident)/i.test(navigator.userAgent);
+	    var urlParsingNode = document.createElement('a');
+	    var originURL;
+	
+	    /**
+	    * Parse a URL to discover it's components
+	    *
+	    * @param {String} url The URL to be parsed
+	    * @returns {Object}
+	    */
+	    function resolveURL(url) {
+	      var href = url;
+	
+	      if (msie) {
+	        // IE needs attribute set twice to normalize properties
+	        urlParsingNode.setAttribute('href', href);
+	        href = urlParsingNode.href;
+	      }
+	
+	      urlParsingNode.setAttribute('href', href);
+	
+	      // urlParsingNode provides the UrlUtils interface - http://url.spec.whatwg.org/#urlutils
+	      return {
+	        href: urlParsingNode.href,
+	        protocol: urlParsingNode.protocol ? urlParsingNode.protocol.replace(/:$/, '') : '',
+	        host: urlParsingNode.host,
+	        search: urlParsingNode.search ? urlParsingNode.search.replace(/^\?/, '') : '',
+	        hash: urlParsingNode.hash ? urlParsingNode.hash.replace(/^#/, '') : '',
+	        hostname: urlParsingNode.hostname,
+	        port: urlParsingNode.port,
+	        pathname: (urlParsingNode.pathname.charAt(0) === '/') ?
+	                  urlParsingNode.pathname :
+	                  '/' + urlParsingNode.pathname
+	      };
+	    }
+	
+	    originURL = resolveURL(window.location.href);
+	
+	    /**
+	    * Determine if a URL shares the same origin as the current location
+	    *
+	    * @param {String} requestURL The URL to test
+	    * @returns {boolean} True if URL shares the same origin, otherwise false
+	    */
+	    return function isURLSameOrigin(requestURL) {
+	      var parsed = (utils.isString(requestURL)) ? resolveURL(requestURL) : requestURL;
+	      return (parsed.protocol === originURL.protocol &&
+	            parsed.host === originURL.host);
+	    };
+	  })() :
+	
+	  // Non standard browser envs (web workers, react-native) lack needed support.
+	  (function nonStandardBrowserEnv() {
+	    return function isURLSameOrigin() {
+	      return true;
+	    };
+	  })()
+	);
+
+
+/***/ },
+/* 258 */
+/*!*************************************!*\
+  !*** ./~/axios/lib/helpers/btoa.js ***!
+  \*************************************/
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	// btoa polyfill for IE<10 courtesy https://github.com/davidchambers/Base64.js
+	
+	var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+	
+	function E() {
+	  this.message = 'String contains an invalid character';
+	}
+	E.prototype = new Error;
+	E.prototype.code = 5;
+	E.prototype.name = 'InvalidCharacterError';
+	
+	function btoa(input) {
+	  var str = String(input);
+	  var output = '';
+	  for (
+	    // initialize result and counter
+	    var block, charCode, idx = 0, map = chars;
+	    // if the next str index does not exist:
+	    //   change the mapping table to "="
+	    //   check if d has no fractional digits
+	    str.charAt(idx | 0) || (map = '=', idx % 1);
+	    // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
+	    output += map.charAt(63 & block >> 8 - idx % 1 * 8)
+	  ) {
+	    charCode = str.charCodeAt(idx += 3 / 4);
+	    if (charCode > 0xFF) {
+	      throw new E();
+	    }
+	    block = block << 8 | charCode;
+	  }
+	  return output;
+	}
+	
+	module.exports = btoa;
+
+
+/***/ },
+/* 259 */
+/*!***************************************!*\
+  !*** ./~/axios/lib/helpers/settle.js ***!
+  \***************************************/
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	/**
+	 * Resolve or reject a Promise based on response status.
+	 *
+	 * @param {Function} resolve A function that resolves the promise.
+	 * @param {Function} reject A function that rejects the promise.
+	 * @param {object} response The response.
+	 */
+	module.exports = function settle(resolve, reject, response) {
+	  var validateStatus = response.config.validateStatus;
+	  // Note: status is not exposed by XDomainRequest
+	  if (!response.status || !validateStatus || validateStatus(response.status)) {
+	    resolve(response);
+	  } else {
+	    reject(response);
+	  }
+	};
+
+
+/***/ },
+/* 260 */
+/*!****************************************!*\
+  !*** ./~/axios/lib/helpers/cookies.js ***!
+  \****************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var utils = __webpack_require__(/*! ./../utils */ 250);
+	
+	module.exports = (
+	  utils.isStandardBrowserEnv() ?
+	
+	  // Standard browser envs support document.cookie
+	  (function standardBrowserEnv() {
+	    return {
+	      write: function write(name, value, expires, path, domain, secure) {
+	        var cookie = [];
+	        cookie.push(name + '=' + encodeURIComponent(value));
+	
+	        if (utils.isNumber(expires)) {
+	          cookie.push('expires=' + new Date(expires).toGMTString());
+	        }
+	
+	        if (utils.isString(path)) {
+	          cookie.push('path=' + path);
+	        }
+	
+	        if (utils.isString(domain)) {
+	          cookie.push('domain=' + domain);
+	        }
+	
+	        if (secure === true) {
+	          cookie.push('secure');
+	        }
+	
+	        document.cookie = cookie.join('; ');
+	      },
+	
+	      read: function read(name) {
+	        var match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
+	        return (match ? decodeURIComponent(match[3]) : null);
+	      },
+	
+	      remove: function remove(name) {
+	        this.write(name, '', Date.now() - 86400000);
+	      }
+	    };
+	  })() :
+	
+	  // Non standard browser env (web workers, react-native) lack needed support.
+	  (function nonStandardBrowserEnv() {
+	    return {
+	      write: function write() {},
+	      read: function read() { return null; },
+	      remove: function remove() {}
+	    };
+	  })()
+	);
+
+
+/***/ },
+/* 261 */
+/*!************************************************!*\
+  !*** ./~/axios/lib/core/InterceptorManager.js ***!
+  \************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var utils = __webpack_require__(/*! ./../utils */ 250);
+	
+	function InterceptorManager() {
+	  this.handlers = [];
+	}
+	
+	/**
+	 * Add a new interceptor to the stack
+	 *
+	 * @param {Function} fulfilled The function to handle `then` for a `Promise`
+	 * @param {Function} rejected The function to handle `reject` for a `Promise`
+	 *
+	 * @return {Number} An ID used to remove interceptor later
+	 */
+	InterceptorManager.prototype.use = function use(fulfilled, rejected) {
+	  this.handlers.push({
+	    fulfilled: fulfilled,
+	    rejected: rejected
+	  });
+	  return this.handlers.length - 1;
+	};
+	
+	/**
+	 * Remove an interceptor from the stack
+	 *
+	 * @param {Number} id The ID that was returned by `use`
+	 */
+	InterceptorManager.prototype.eject = function eject(id) {
+	  if (this.handlers[id]) {
+	    this.handlers[id] = null;
+	  }
+	};
+	
+	/**
+	 * Iterate over all the registered interceptors
+	 *
+	 * This method is particularly useful for skipping over any
+	 * interceptors that may have become `null` calling `eject`.
+	 *
+	 * @param {Function} fn The function to call for each interceptor
+	 */
+	InterceptorManager.prototype.forEach = function forEach(fn) {
+	  utils.forEach(this.handlers, function forEachHandler(h) {
+	    if (h !== null) {
+	      fn(h);
+	    }
+	  });
+	};
+	
+	module.exports = InterceptorManager;
+
+
+/***/ },
+/* 262 */
+/*!**********************************************!*\
+  !*** ./~/axios/lib/helpers/isAbsoluteURL.js ***!
+  \**********************************************/
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	/**
+	 * Determines whether the specified URL is absolute
+	 *
+	 * @param {string} url The URL to test
+	 * @returns {boolean} True if the specified URL is absolute, otherwise false
+	 */
+	module.exports = function isAbsoluteURL(url) {
+	  // A URL is considered absolute if it begins with "<scheme>://" or "//" (protocol-relative URL).
+	  // RFC 3986 defines scheme name as a sequence of characters beginning with a letter and followed
+	  // by any combination of letters, digits, plus, period, or hyphen.
+	  return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url);
+	};
+
+
+/***/ },
+/* 263 */
+/*!********************************************!*\
+  !*** ./~/axios/lib/helpers/combineURLs.js ***!
+  \********************************************/
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	/**
+	 * Creates a new URL by combining the specified URLs
+	 *
+	 * @param {string} baseURL The base URL
+	 * @param {string} relativeURL The relative URL
+	 * @returns {string} The combined URL
+	 */
+	module.exports = function combineURLs(baseURL, relativeURL) {
+	  return baseURL.replace(/\/+$/, '') + '/' + relativeURL.replace(/^\/+/, '');
+	};
+
+
+/***/ },
+/* 264 */
+/*!*************************************!*\
+  !*** ./~/axios/lib/helpers/bind.js ***!
+  \*************************************/
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	module.exports = function bind(fn, thisArg) {
+	  return function wrap() {
+	    var args = new Array(arguments.length);
+	    for (var i = 0; i < args.length; i++) {
+	      args[i] = arguments[i];
+	    }
+	    return fn.apply(thisArg, args);
+	  };
+	};
+
+
+/***/ },
+/* 265 */
+/*!***************************************!*\
+  !*** ./~/axios/lib/helpers/spread.js ***!
+  \***************************************/
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	/**
+	 * Syntactic sugar for invoking a function and expanding an array for arguments.
+	 *
+	 * Common use case would be to use `Function.prototype.apply`.
+	 *
+	 *  ```js
+	 *  function f(x, y, z) {}
+	 *  var args = [1, 2, 3];
+	 *  f.apply(null, args);
+	 *  ```
+	 *
+	 * With `spread` this example can be re-written.
+	 *
+	 *  ```js
+	 *  spread(function(x, y, z) {})([1, 2, 3]);
+	 *  ```
+	 *
+	 * @param {Function} callback
+	 * @returns {Function}
+	 */
+	module.exports = function spread(callback) {
+	  return function wrap(arr) {
+	    return callback.apply(null, arr);
+	  };
+	};
+
+
+/***/ },
+/* 266 */
 /*!*********************************!*\
   !*** ./app/components/Saved.js ***!
   \*********************************/
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	
+	// Include React as a dependency
+	var React = __webpack_require__(/*! react */ 1);
+	
+	// Include the Helper (for the saved recall)
+	var helpers = __webpack_require__(/*! ../utils/helpers */ 246);
+	
+	// Create the Main component
+	var Main = React.createClass({
+	  displayName: "Main",
+	
+	
+	  getInitialState: function getInitialState() {
+	    return { savedArticles: "" };
+	  },
+	
+	  // When this component mounts, get all saved articles from our db
+	  componentDidMount: function componentDidMount() {
+	    helpers.getSaved().then(function (articleData) {
+	      this.setState({ savedArticles: articleData.data });
+	      console.log("saved results", articleData.data);
+	    }.bind(this));
+	  },
+	
+	  // This code handles the deleting saved articles from our database
+	  handleClick: function handleClick(item) {
+	    console.log("CLICKED");
+	    console.log(item);
+	
+	    // Delete the list!
+	    helpers.deleteSaved(item.title, item.date, item.url).then(function () {
+	
+	      // Get the revised list!
+	      helpers.getSaved().then(function (articleData) {
+	        this.setState({ savedArticles: articleData.data });
+	        console.log("saved results", articleData.data);
+	      }.bind(this));
+	    }.bind(this));
+	  },
+	  // A helper method for rendering the HTML when we have no saved articles
+	  renderEmpty: function renderEmpty() {
+	    return React.createElement(
+	      "li",
+	      { className: "list-group-item" },
+	      React.createElement(
+	        "h3",
+	        null,
+	        React.createElement(
+	          "span",
+	          null,
+	          React.createElement(
+	            "em",
+	            null,
+	            "Save your first article..."
+	          )
+	        )
+	      )
+	    );
+	  },
+	
+	  // A helper method for mapping through our articles and outputting some HTML
+	  renderArticles: function renderArticles() {
+	    return this.state.savedArticles.map(function (article, index) {
+	      var _this = this;
+	
+	      return React.createElement(
+	        "div",
+	        { key: index },
+	        React.createElement(
+	          "li",
+	          { className: "list-group-item" },
+	          React.createElement(
+	            "h3",
+	            null,
+	            React.createElement(
+	              "span",
+	              null,
+	              React.createElement(
+	                "em",
+	                null,
+	                article.title
+	              )
+	            ),
+	            React.createElement(
+	              "span",
+	              { className: "btn-group pull-right" },
+	              React.createElement(
+	                "a",
+	                { href: article.url, rel: "noopener noreferrer", target: "_blank" },
+	                React.createElement(
+	                  "button",
+	                  { className: "btn btn-default " },
+	                  "View Article"
+	                )
+	              ),
+	              React.createElement(
+	                "button",
+	                { className: "btn btn-primary", onClick: function onClick() {
+	                    return _this.handleClick(article);
+	                  } },
+	                "Delete"
+	              )
+	            )
+	          ),
+	          React.createElement(
+	            "p",
+	            null,
+	            "Date Published: ",
+	            article.date
+	          )
+	        )
+	      );
+	    }.bind(this));
+	  },
+	
+	  // A helper method for rendering a container and all of our artiles inside
+	  renderContainer: function renderContainer() {
+	    return React.createElement(
+	      "div",
+	      { className: "main-container" },
+	      React.createElement(
+	        "div",
+	        { className: "row" },
+	        React.createElement(
+	          "div",
+	          { className: "col-lg-12" },
+	          React.createElement(
+	            "div",
+	            { className: "panel panel-primary" },
+	            React.createElement(
+	              "div",
+	              { className: "panel-heading" },
+	              React.createElement(
+	                "h1",
+	                { className: "panel-title" },
+	                React.createElement(
+	                  "strong",
+	                  null,
+	                  React.createElement("i", { className: "fa fa-download", "aria-hidden": "true" }),
+	                  " Saved Articles"
+	                )
+	              )
+	            ),
+	            React.createElement(
+	              "div",
+	              { className: "panel-body" },
+	              React.createElement(
+	                "ul",
+	                { className: "list-group" },
+	                this.renderArticles()
+	              )
+	            )
+	          )
+	        )
+	      )
+	    );
+	  },
+	  // Our render method. Utilizing a few helper methods to keep this logic clean
+	  render: function render() {
+	    // If we have no articles, we will return this.renderEmpty() which in turn returns some HTML
+	    if (!this.state.savedArticles) {
+	      return this.renderEmpty();
+	    }
+	    // If we have articles, return this.renderContainer() which in turn returns all saves articles
+	    return this.renderContainer();
+	  }
+	});
+	
+	// Export the module back to the route
+	module.exports = Main;
 
 /***/ }
 /******/ ]);
