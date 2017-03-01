@@ -1,12 +1,10 @@
 // Include React as a dependency
 var React = require("react");
-
-// Include our helpers for API calls
+// Include our helpers for NYT API calls
 var helpers = require("../../utils/helpers");
 
 // Results Component Declaration
 var Results = React.createClass({
-
   // Here we will save states for the contents we save
   getInitialState: function() {
     return {
@@ -18,9 +16,6 @@ var Results = React.createClass({
 
   // This code handles the sending of the search terms to the parent Search component
   handleClick: function(item) {
-    console.log("CLICKED");
-    console.log(item);
-
     helpers.postSaved(item.headline.main, item.pub_date, item.web_url).then(function() {
       console.log(item.web_url);
     });
@@ -94,7 +89,7 @@ var Results = React.createClass({
         <li className="list-group-item">
           <h3>
             <span>
-              <em>Enter search terms to begin...</em>
+              <em>Enter search terms to get started...</em>
             </span>
           </h3>
         </li>

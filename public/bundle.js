@@ -22035,18 +22035,13 @@
 
 	"use strict";
 	
-	// Inclue the React library
+	// Inclue the React library and react-router module
 	var React = __webpack_require__(/*! react */ 1);
-	
-	// Include the react-router module
 	var router = __webpack_require__(/*! react-router */ 179);
-	
 	// Include the Route component
 	var Route = router.Route;
-	
-	//  Include the IndexRoute (catch-all route)
+	// Include the IndexRoute (catch-all route)
 	var IndexRoute = router.IndexRoute;
-	
 	// Include the Router component
 	var Router = router.Router;
 	
@@ -22058,7 +22053,7 @@
 	var Search = __webpack_require__(/*! ../components/Search */ 243);
 	var Saved = __webpack_require__(/*! ../components/Saved */ 266);
 	
-	// Export the Routes
+	// Export Routes
 	module.exports =
 	// High level component is the Router component.
 	React.createElement(
@@ -28064,31 +28059,26 @@
 	
 	// Include React as a dependency
 	var React = __webpack_require__(/*! react */ 1);
-	
 	// Include the Query and Results components
 	var Query = __webpack_require__(/*! ./search/Query */ 244);
 	var Results = __webpack_require__(/*! ./search/Results */ 245);
-	
-	// Include the helpers for making API calls
+	// Include the helpers for making NYT API calls
 	var helpers = __webpack_require__(/*! ../utils/helpers */ 246);
 	
 	// Create the Search component
 	var Search = React.createClass({
 	  displayName: "Search",
 	
-	
-	  // Here we set the initial state variables
-	  // (this allows us to propagate the variables for maniuplation by the children components
-	  // Also note the "resuls" state. This will be where we hold the data from our results
+	  // Set the initial state variables which allows for maniuplation by child components
+	  // Result state where data will be held from results
 	  getInitialState: function getInitialState() {
 	    return {
 	      results: {}
 	    };
 	  },
 	
-	  // This function will be passed down into child components so they can change the "parent"
-	  // i.e we will pass this method to the query component that way it can change the main component
-	  // to perform a new search
+	  // Function will be passed down to child components so they can change the "parent"
+	  // Pass method to query component in order to change the main component to perform new search
 	  setQuery: function setQuery(newQuery, newStart, newEnd) {
 	    helpers.runQuery(newQuery, newStart, newEnd).then(function (data) {
 	      this.setState({ results: { docs: data.docs } });
@@ -28253,7 +28243,7 @@
 	                    "button",
 	                    {
 	                      type: "submit",
-	                      className: "btn btn-primary"
+	                      className: "btn btn-danger"
 	                    },
 	                    React.createElement(
 	                      "h4",
@@ -28285,14 +28275,12 @@
 	
 	// Include React as a dependency
 	var React = __webpack_require__(/*! react */ 1);
-	
-	// Include our helpers for API calls
+	// Include our helpers for NYT API calls
 	var helpers = __webpack_require__(/*! ../../utils/helpers */ 246);
 	
 	// Results Component Declaration
 	var Results = React.createClass({
 	  displayName: "Results",
-	
 	
 	  // Here we will save states for the contents we save
 	  getInitialState: function getInitialState() {
@@ -28305,9 +28293,6 @@
 	
 	  // This code handles the sending of the search terms to the parent Search component
 	  handleClick: function handleClick(item) {
-	    console.log("CLICKED");
-	    console.log(item);
-	
 	    helpers.postSaved(item.headline.main, item.pub_date, item.web_url).then(function () {
 	      console.log(item.web_url);
 	    });
@@ -28426,7 +28411,7 @@
 	            React.createElement(
 	              "em",
 	              null,
-	              "Enter search terms to begin..."
+	              "Enter search terms to get started..."
 	            )
 	          )
 	        )

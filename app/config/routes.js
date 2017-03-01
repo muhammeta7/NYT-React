@@ -1,15 +1,10 @@
-// Inclue the React library
+// Inclue the React library and react-router module
 var React = require("react");
-
-// Include the react-router module
 var router = require("react-router");
-
 // Include the Route component
 var Route = router.Route;
-
-//  Include the IndexRoute (catch-all route)
+// Include the IndexRoute (catch-all route)
 var IndexRoute = router.IndexRoute;
-
 // Include the Router component
 var Router = router.Router;
 
@@ -21,8 +16,7 @@ var Main = require("../components/Main");
 var Search = require("../components/Search");
 var Saved = require("../components/Saved");
 
-
-// Export the Routes
+// Export Routes
 module.exports = (
   // High level component is the Router component.
   <Router history={browserHistory}>

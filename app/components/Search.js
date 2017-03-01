@@ -1,28 +1,23 @@
 // Include React as a dependency
 var React = require("react");
-
 // Include the Query and Results components
 var Query = require("./search/Query");
 var Results = require("./search/Results");
-
-// Include the helpers for making API calls
+// Include the helpers for making NYT API calls
 var helpers = require("../utils/helpers");
 
 // Create the Search component
 var Search = React.createClass({
-
-  // Here we set the initial state variables
-  // (this allows us to propagate the variables for maniuplation by the children components
-  // Also note the "resuls" state. This will be where we hold the data from our results
+  // Set the initial state variables which allows for maniuplation by child components
+  // Result state where data will be held from results
   getInitialState: function() {
     return {
       results: {}
     };
   },
 
-  // This function will be passed down into child components so they can change the "parent"
-  // i.e we will pass this method to the query component that way it can change the main component
-  // to perform a new search
+  // Function will be passed down to child components so they can change the "parent"
+  // Pass method to query component in order to change the main component to perform new search
   setQuery: function(newQuery, newStart, newEnd) {
     helpers.runQuery(newQuery, newStart, newEnd).then(function(data) {
       this.setState({ results: { docs: data.docs } });
