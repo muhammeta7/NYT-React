@@ -20,6 +20,7 @@ app.use(express.static("./public"));
 
 // MongoDB connection
 var db = mongoose.connection;
+mongoose.connect("mongodb://heroku_p5s453s6:1ip41l2a1vf73e76pijoeh5uda@ds113650.mlab.com:13650/heroku_p5s453s6")
 
 db.on("error", function(err) {
   console.log("Mongoose Error: ", err);
