@@ -45,7 +45,7 @@ var Query = React.createClass({
               <div className="panel-heading">
                 <h1 className="panel-title">
                   <strong>
-                    <i className="fa fa-newspaper-o" aria-hidden="true"></i> Query
+                    <i className="fa fa-newspaper-o" aria-hidden="true"></i> Search A Topic of your Choosing
                   </strong>
                 </h1>
               </div>

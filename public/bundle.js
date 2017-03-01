@@ -28181,7 +28181,7 @@
 	                  "strong",
 	                  null,
 	                  React.createElement("i", { className: "fa fa-newspaper-o", "aria-hidden": "true" }),
-	                  " Query"
+	                  " Search A Topic of your Choosing"
 	                )
 	              )
 	            ),
@@ -28253,7 +28253,7 @@
 	                    "button",
 	                    {
 	                      type: "submit",
-	                      className: "btn btn-danger"
+	                      className: "btn btn-primary"
 	                    },
 	                    React.createElement(
 	                      "h4",
