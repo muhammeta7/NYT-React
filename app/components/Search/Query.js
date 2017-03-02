@@ -18,8 +18,6 @@ var Query = React.createClass({
     console.log("TEXT CHANGED");
 
     // Here we create syntax to capture any change in text to the query terms (pre-search).
-    // See this Stack Overflow answer for more details:
-    // http://stackoverflow.com/questions/21029999/react-js-identifying-different-inputs-with-one-onchange-handler
     var newState = {};
     newState[event.target.id] = event.target.value;
     this.setState(newState);
@@ -91,7 +89,7 @@ var Query = React.createClass({
                   <div className="pull-right">
                     <button
                       type="submit"
-                      className="btn btn-danger"
+                      className="btn btn-info"
                     >
                       <h4>Submit</h4>
                     </button>

@@ -42,7 +42,7 @@ var Results = React.createClass({
                   By using an arrow function callback to wrap this.handleClick,
                   we can pass in an article as an argument
                 */}
-                <button className="btn btn-primary" onClick={() => this.handleClick(article)}>Save</button>
+                <button className="btn btn-success" onClick={() => this.handleClick(article)}>Save</button>
               </span>
             </h3>
             <p>Date Published: {article.pub_date}</p>

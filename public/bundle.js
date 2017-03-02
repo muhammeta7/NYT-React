@@ -28132,8 +28132,6 @@
 	    console.log("TEXT CHANGED");
 	
 	    // Here we create syntax to capture any change in text to the query terms (pre-search).
-	    // See this Stack Overflow answer for more details:
-	    // http://stackoverflow.com/questions/21029999/react-js-identifying-different-inputs-with-one-onchange-handler
 	    var newState = {};
 	    newState[event.target.id] = event.target.value;
 	    this.setState(newState);
@@ -28243,7 +28241,7 @@
 	                    "button",
 	                    {
 	                      type: "submit",
-	                      className: "btn btn-danger"
+	                      className: "btn btn-info"
 	                    },
 	                    React.createElement(
 	                      "h4",
@@ -28336,7 +28334,7 @@
 	              ),
 	              React.createElement(
 	                "button",
-	                { className: "btn btn-primary", onClick: function onClick() {
+	                { className: "btn btn-success", onClick: function onClick() {
 	                    return _this.handleClick(article);
 	                  } },
 	                "Save"
@@ -29862,13 +29860,13 @@
 	                { href: article.url, rel: "noopener noreferrer", target: "_blank" },
 	                React.createElement(
 	                  "button",
-	                  { className: "btn btn-default " },
+	                  { className: "btn btn-info" },
 	                  "View Article"
 	                )
 	              ),
 	              React.createElement(
 	                "button",
-	                { className: "btn btn-primary", onClick: function onClick() {
+	                { className: "btn btn-danger", onClick: function onClick() {
 	                    return _this.handleClick(article);
 	                  } },
 	                "Delete"

@@ -61,9 +61,9 @@ var Main = React.createClass({
               </span>
               <span className="btn-group pull-right">
                 <a href={article.url} rel="noopener noreferrer" target="_blank">
-                  <button className="btn btn-default ">View Article</button>
+                  <button className="btn btn-info">View Article</button>
                 </a>
-                <button className="btn btn-primary" onClick={() => this.handleClick(article)}>Delete</button>
+                <button className="btn btn-danger" onClick={() => this.handleClick(article)}>Delete</button>
               </span>
             </h3>
             <p>Date Published: {article.date}</p>
