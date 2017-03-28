@@ -35,8 +35,7 @@ When `cd`-ed into this repo, enter `webpack -d` in the command line to compile i
 #### Press the green, save button and the article is bookmarked via an `/api/saved` post route
 ![Results](/screenshots/results.PNG)
 
-#### Press the red, remove button and the bookmarked article is removed via an `/api/delete/:id` post route
-#### You can view the articles you've saved in this route
+#### Press the red, remove button and the bookmarked article is removed via an `/api/delete/:id` post route. You can view the articles you've saved into the DB.
 ![Bookmarked](/screenshots/saved.PNG)
 
 #### Note that the get routes include an **internal route** to `/api/saved` for querying and displaying all the bookmarked articles from the Mongo database.
